@@ -1,0 +1,6 @@
+@PackingListChatBot_HostAddress = http://localhost:5107
+
+GET {{PackingListChatBot_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
