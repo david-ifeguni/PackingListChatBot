@@ -6,7 +6,6 @@ namespace PackingListChatBot.SemanticKernel.KernelFactory
     {
         public static Kernel BuildKernel()
         {
-            // var temp = Kernel.CreateBuilder().Build();
             var kernelBuilder = Kernel.CreateBuilder();
 
             kernelBuilder.AddAzureOpenAIChatCompletion(
