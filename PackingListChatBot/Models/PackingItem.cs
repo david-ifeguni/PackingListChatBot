@@ -2,12 +2,12 @@
 {
     /// <summary>
     /// Defines the PackingItem model
-    /// Item: The name of the item
-    /// Reason: Reason the item is needed
+    /// Category: Category of the item
+    /// Examples: List of example items in the category
+    /// Reason: Explanation why the items are needed, to be used by the LLM
     /// </summary>
     public class PackingItem
     {
-        // public string? Item {  get; set; }
         public string Category { get; set; } = string.Empty;
         public List<string> Examples { get; set; } = new List<string>();
         public string? Reason { get; set; }

@@ -1,6 +1,6 @@
 ﻿using PackingListChatBot.Models;
 
-namespace PackingListChatBot.Packing
+namespace PackingListChatBot.Services.Packing
 {
     public class PackingListGenerator : IPackingListGenerator
     {

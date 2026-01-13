@@ -8,15 +8,24 @@ namespace PackingListChatBot.SemanticKernel.KernelFactory
         {
             var kernelBuilder = Kernel.CreateBuilder();
 
+            string deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME");
+            string apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY");
+            string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
+
+            if (string.IsNullOrEmpty(deploymentName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(endpoint))
+            {
+                throw new Exception("Azure OpenAI credentials for Semantic Kernel not found");
+            }
+
             kernelBuilder.AddAzureOpenAIChatCompletion(
-                deploymentName: "AZURE_DEPLOYMENT_NAME",
-                apiKey: "AZURE_API_KEY",
-                endpoint: "AZURE_ENDPOINT"
+                deploymentName: deploymentName,
+                apiKey: apiKey,
+                endpoint: endpoint
                 );
 
             var kernel = kernelBuilder.Build();
 
             return kernel;
-        } 
+        }
     }
 }

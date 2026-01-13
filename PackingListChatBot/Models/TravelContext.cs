@@ -1,5 +1,8 @@
 ﻿namespace PackingListChatBot.Models
 {
+    /// <summary>
+    /// Travel Context object, updated after each user message
+    /// </summary>
     public class TravelContext
     {
         public string? Location { get; set; }

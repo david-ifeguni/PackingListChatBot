@@ -1,5 +1,8 @@
 ﻿namespace PackingListChatBot.Models
 {
+    /// <summary>
+    /// Response object to be returned by the PackingList Service
+    /// </summary>
     public class PackingListServiceResponse
     {
         public bool NeedsClarification { get; set; }
