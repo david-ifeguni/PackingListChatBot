@@ -1,6 +1,6 @@
 ﻿using PackingListChatBot.Models;
 
-namespace PackingListChatBot.Services
+namespace PackingListChatBot.Services.OpenMeteoService
 {
     public interface IWeatherService
     {

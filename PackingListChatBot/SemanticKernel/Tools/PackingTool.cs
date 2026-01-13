@@ -83,6 +83,7 @@ namespace PackingListChatBot.SemanticKernel.Tools
 
         private static PackingIntentResult PoliteClarificationRequest()
         {
+            //TODO: This may not be needed if we set the clarification question after checking TravelContext
             return new PackingIntentResult
             {
                 NeedsClarification = true,

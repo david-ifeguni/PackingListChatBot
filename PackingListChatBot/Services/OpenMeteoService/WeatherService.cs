@@ -3,7 +3,7 @@ using PackingListChatBot.Services.OpenMeteoService.Geocoding;
 using PackingListChatBot.Services.OpenMeteoService.HistoricalWeather;
 
 
-namespace PackingListChatBot.Services
+namespace PackingListChatBot.Services.OpenMeteoService
 {
     public class WeatherService : IWeatherService
     {
@@ -49,6 +49,7 @@ namespace PackingListChatBot.Services
 
             string officialLocation = string.Concat(geocodingResult.Name, ",", geocodingResult.Admin1, ",", geocodingResult.Country);
             // Potential problem with above is that Admin1 may be null/empty sometimes
+            
             var weatherProfile = new WeatherProfile
             {
                 Location = officialLocation,

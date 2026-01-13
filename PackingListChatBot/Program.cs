@@ -1,9 +1,3 @@
-using Microsoft.SemanticKernel;
-using PackingListChatBot.Packing;
-using PackingListChatBot.SemanticKernel.KernelFactory;
-using PackingListChatBot.SemanticKernel.Prompts;
-using PackingListChatBot.SemanticKernel.Tools;
-using PackingListChatBot.Services;
 using PackingListChatBot.Services.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);

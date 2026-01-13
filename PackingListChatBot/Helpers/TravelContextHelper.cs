@@ -1,5 +1,4 @@
 ﻿using PackingListChatBot.Models;
-using PackingListChatBot.Packing;
 using PackingListChatBot.SemanticKernel.Models;
 
 namespace PackingListChatBot.Helpers

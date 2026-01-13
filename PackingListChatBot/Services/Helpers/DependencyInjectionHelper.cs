@@ -1,7 +1,8 @@
-﻿using PackingListChatBot.Packing;
-using PackingListChatBot.SemanticKernel.KernelFactory;
+﻿using PackingListChatBot.SemanticKernel.KernelFactory;
 using PackingListChatBot.SemanticKernel.Prompts;
 using PackingListChatBot.SemanticKernel.Tools;
+using PackingListChatBot.Services.OpenMeteoService;
+using PackingListChatBot.Services.Packing;
 using PackingListChatBot.Store;
 
 namespace PackingListChatBot.Services.Helpers

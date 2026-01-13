@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
 using PackingListChatBot.Models;
-using PackingListChatBot.Packing;
 using PackingListChatBot.Helpers;
 using PackingListChatBot.SemanticKernel.KernelFactory;
 using PackingListChatBot.SemanticKernel.Prompts;
 using PackingListChatBot.SemanticKernel.Tools;
 using PackingListChatBot.Store;
+using PackingListChatBot.Services.OpenMeteoService;
 
-namespace PackingListChatBot.Services
+namespace PackingListChatBot.Services.Packing
 {
     public class PackingListService : IPackingListService
     {
@@ -50,10 +50,7 @@ namespace PackingListChatBot.Services
 
             if (!travelContext.IsComplete)
             {
-                // Decide which info is missing
-                // Set the clarification question accordingly
-                // Return new PackingListServiceResponse
-                // string question = TravelContextHelper.GetClarificationQuestion(travelContext);
+                // Return new PackingListServiceResonse with the correct clarification question
                 return new PackingListServiceResponse
                 {
                     NeedsClarification = true,
@@ -61,40 +58,12 @@ namespace PackingListChatBot.Services
                 };
             }
 
-            //// If clarification is needed, return immediately with clarification question
-            //if (packingIntentResult.NeedsClarification)
-            //{
-            //    return new PackingListServiceResponse
-            //    {
-            //        NeedsClarification = true,
-            //        ClarificationQuestion = packingIntentResult.ClarificationQuestion ?? "Temporary clarification question",
-            //    };
-            //}
-
-            //if (string.IsNullOrEmpty(packingIntentResult.Location))
-            //{
-            //    return new PackingListServiceResponse
-            //    {
-            //        NeedsClarification = true,
-            //        ClarificationQuestion = "Could you clarify what your travel destination is?",
-            //    };
-            //}
-
-            //if (!packingIntentResult.StartTime.HasValue || !packingIntentResult.EndTime.HasValue)
-            //{
-            //    return new PackingListServiceResponse
-            //    {
-            //        NeedsClarification = true,
-            //        ClarificationQuestion = "Could you clarify your travel dates?",
-            //    };
-            //}
-
             // Use packingIntentResult to get the Weather Profile from the Weather Service (powered by Open-Meteo APIs)
             var weatherProfile = await weatherService.GetWeatherProfile(travelContext.Location, travelContext.StartTime.Value, travelContext.EndTime.Value);
 
             // Use weatherProfile and activities from packingIntentResult to get the packingConstraints
-            var packingConstraints = packingConstraintsAggregator.BuildPackingConstraints(weatherProfile, travelContext.Activities.ToList());
-            // TODO: Fix the warning above, ideally shouldn't need activities to be mandatory in order to generate a packing list
+            var activityList = travelContext.Activities.ToList();
+            var packingConstraints = packingConstraintsAggregator.BuildPackingConstraints(weatherProfile, activityList);
 
             // Use the packingConstraints to build the packing list
             var packingList = packingListGenerator.GeneratePackingList(
@@ -102,7 +71,7 @@ namespace PackingListChatBot.Services
                 travelContext.Location,
                 travelContext.StartTime.Value,
                 travelContext.EndTime.Value,
-                travelContext.Activities.ToList());
+                activityList);
 
             var readoutPrompt = promptProvider.GetPackingListReadoutPrompt();
 
@@ -111,7 +80,7 @@ namespace PackingListChatBot.Services
                 ["location"] = travelContext.Location,
                 ["startTime"] = $"{travelContext.StartTime:yyyy-MM-dd}",
                 ["endTime"] = $"{travelContext.EndTime:yyyy-MM-dd}",
-                ["activities"] = string.Join(", ", travelContext.Activities.ToList()),
+                ["activities"] = string.Join(", ", activityList),
                 ["packingListJson"] = JsonSerializer.Serialize(packingList)
             };
 

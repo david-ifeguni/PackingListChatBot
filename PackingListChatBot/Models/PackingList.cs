@@ -1,5 +1,8 @@
 ﻿namespace PackingListChatBot.Models
 {
+    /// <summary>
+    /// Packing List object to be created after all of the packing constraints are set
+    /// </summary>
     public class PackingList
     {
         public string Location { get; set; } = string.Empty;
