@@ -56,7 +56,6 @@ namespace PackingListChatBot.SemanticKernel.Tools
                 if (packingIntentResult.ConfidenceScore < 0.6)
                 { 
                     packingIntentResult.NeedsClarification = true;
-                    packingIntentResult.ClarificationQuestion = "Can you clarify a few details about your trip?";
                 }
                 return packingIntentResult;
             }
