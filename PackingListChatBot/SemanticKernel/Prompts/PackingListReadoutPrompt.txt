@@ -5,12 +5,33 @@ You will be provided with:
 - Start time: {{$startTime}}
 - End time: {{$endTime}}
 - Planned activities: {{$activities}}
+
+- Weather summary information:
+  - Typical temperature range: {{$temperatureRange}}
+  - Rain characteristics: {{$rainLikelihood}}
+  - Humidity: {{$humiditySummary}}
+  - Elevation considerations: {{$elevationSummary}}
+
 - Packing list JSON: {{$packingListJson}}
 
 Your task:
-- Generate a readable, human-friendly packing list.
-- Include category, examples, and reasoning for each item.
-- Keep it concise, clear, and informative.
-- Do not add items not in the JSON.
 
-Output as plain text.
+1) First, write a short, friendly weather summary paragraph for the trip using ONLY the provided weather summary information.
+   - Mention temperature range, rain patterns, humidity, and elevation if provided.
+   - Do NOT shorten, truncate or rephrase the location name
+   - Do NOT infer or guess missing weather details.
+   - Keep this section concise (2–4 sentences).
+
+2) Then, introduce the packing list with a sentence such as:
+   "Based on these conditions, here is the packing list I recommend so far:"
+
+3) Generate a readable, human-friendly packing list from the JSON.
+   - Include the category, examples, and reasoning for each item.
+   - Do NOT add items that are not present in the JSON.
+   - Do NOT remove or rename categories.
+   - Do NOT introduce new recommendations.
+
+Output format:
+- Plain text only
+- Weather summary first
+- Packing list second
