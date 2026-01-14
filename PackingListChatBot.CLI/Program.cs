@@ -48,7 +48,6 @@ while(true)
         Console.WriteLine();
         Console.WriteLine(response.FormattedPackingList);
         Console.WriteLine();
-        // break;
     }
     
 }
