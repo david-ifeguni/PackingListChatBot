@@ -73,23 +73,12 @@ namespace PackingListChatBot.Services.Packing
                 travelContext.EndTime.Value,
                 activityList);
 
-            var readoutPrompt = promptProvider.GetPackingListReadoutPrompt();
-
-            //var parameters = new Dictionary<string, object>
-            //{
-            //    ["location"] = travelContext.Location,
-            //    ["startTime"] = $"{travelContext.StartTime:yyyy-MM-dd}",
-            //    ["endTime"] = $"{travelContext.EndTime:yyyy-MM-dd}",
-            //    ["activities"] = string.Join(", ", activityList),
-            //    ["packingListJson"] = JsonSerializer.Serialize(packingList),
-            //    ["weatherProfileJson"] = JsonSerializer.Serialize(weatherProfile)
-            //};
-
             string message;
-
             try
             {
-                message = await kernelInvoker.InvokeAsync(readoutPrompt, ParamBuilder.BuildPackingListReadoutParams(weatherProfile, packingList));
+                message = await kernelInvoker.InvokeAsync(
+                    promptProvider.GetPackingListReadoutPrompt(), 
+                    ParamBuilder.BuildPackingListReadoutParams(weatherProfile, packingList));
             }
             catch (Exception ex)
             {

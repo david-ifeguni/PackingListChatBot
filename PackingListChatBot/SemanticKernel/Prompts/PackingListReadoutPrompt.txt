@@ -31,6 +31,9 @@ Your task:
    - Do NOT remove or rename categories.
    - Do NOT introduce new recommendations.
 
+4) Then, end with a sentence to wish the user a safe and happy trip, such as:
+	- Truncate the location name
+
 Output format:
 - Plain text only
 - Weather summary first
