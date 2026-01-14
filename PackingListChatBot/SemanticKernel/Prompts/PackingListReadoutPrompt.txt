@@ -8,9 +8,9 @@ You will be provided with:
 
 - Weather summary information:
   - Typical temperature range: {{$temperatureRange}}
-  - Rain characteristics: {{$rainLikelihood}}
-  - Humidity: {{$humiditySummary}}
-  - Elevation considerations: {{$elevationSummary}}
+  - Rain likelihood: {{$rainLikelihood}}
+  - Humidity summary: {{$humiditySummary}}
+  - Elevation summary: {{$elevationSummary}}
 
 - Packing list JSON: {{$packingListJson}}
 
