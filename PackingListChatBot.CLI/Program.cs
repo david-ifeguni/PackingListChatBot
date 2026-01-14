@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using PackingListChatBot.Services.Helpers;
 using PackingListChatBot.Models;
 using PackingListChatBot.Services.Packing;
@@ -12,8 +10,9 @@ var serviceProvider = services.BuildServiceProvider();
 
 var packingListService = serviceProvider.GetRequiredService<IPackingListService>();
 
-Console.WriteLine("PackingListChatBot CLI Entry Point.");
-Console.WriteLine("Type your travel message (or 'exit'):");
+Console.WriteLine("Hello! I am your packing list chat bot, here to assist you with organizing your packing list for your upcoming vacation. Please tell me your destination, dates of travel and any activities you have planned, and I will design a packing list just for you.");
+Console.WriteLine("Type your message below (or type 'exit' to exit program):");
+Console.WriteLine();
 
 var conversationId = Guid.NewGuid().ToString();
 
@@ -50,7 +49,6 @@ while(true)
         Console.WriteLine();
         Console.WriteLine(response.FormattedPackingList);
         Console.WriteLine();
-        // break;
     }
     
 }
