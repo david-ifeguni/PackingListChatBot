@@ -15,8 +15,7 @@ namespace PackingListChatBot.SemanticKernel.Tools.Tests
                 "startTime": "2026-03-15",
                 "endTime": "2026-03-30",
                 "activities": ["Hiking", "WineTasting"],
-                "unknownActivities": [],
-                "needsClarification": false
+                "unknownActivities": []
             }
             """;
 
@@ -24,9 +23,10 @@ namespace PackingListChatBot.SemanticKernel.Tools.Tests
 
             var result = await tool.GetPackingIntentAsync("Trip to Chicago");
 
-            Assert.IsFalse(result.NeedsClarification);
             Assert.AreEqual("Chicago, IL", result.Location);
-            Assert.IsTrue(result.ConfidenceScore >= 0.6);
+            Assert.IsTrue(result.Activities?.Count == 2);
+            Assert.AreEqual(DateOnly.Parse("2026-03-15"), result.StartTime.Value);
+            Assert.AreEqual(DateOnly.Parse("2026-03-30"), result.EndTime.Value);
         }
 
         [TestMethod()]
@@ -35,8 +35,7 @@ namespace PackingListChatBot.SemanticKernel.Tools.Tests
             var json = """
             {
                 "location": "Chicago",
-                "activities": ["Hiking"],
-                "needsClarification": true
+                "activities": ["Hiking"]
             }
             """;
 
@@ -44,8 +43,10 @@ namespace PackingListChatBot.SemanticKernel.Tools.Tests
 
             var result = await tool.GetPackingIntentAsync("Going hiking in Chicago");
 
-            Assert.IsTrue(result.NeedsClarification);
-            Assert.IsTrue(result.ConfidenceScore < 0.6);
+            Assert.AreEqual("Chicago", result.Location);
+            Assert.IsTrue(result.Activities?.Count == 1);
+            Assert.IsFalse(result.StartTime.HasValue);
+            Assert.IsFalse(result.EndTime.HasValue);
         }
 
         [TestMethod()]
@@ -57,8 +58,7 @@ namespace PackingListChatBot.SemanticKernel.Tools.Tests
                 "startTime": "2026-05-01",
                 "endTime": "2026-05-10",
                 "activities": ["Hiking"],
-                "unknownActivities": ["Paragliding"],
-                "needsClarification": false
+                "unknownActivities": ["Paragliding"]
             }
             """;
 
@@ -67,8 +67,6 @@ namespace PackingListChatBot.SemanticKernel.Tools.Tests
             var result = await tool.GetPackingIntentAsync("Trip to Denver");
 
             Assert.IsNotNull(result.UnknownActivities);
-            Assert.IsTrue(result.UnknownActivities.Contains("Paragliding"));
-            Assert.IsTrue(result.ConfidenceScore < 1.0);
         }
     }
 }

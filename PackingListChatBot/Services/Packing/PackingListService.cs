@@ -44,6 +44,12 @@ namespace PackingListChatBot.Services.Packing
             // Get current travel context
             var travelContext = travelContextStore.Get(conversationId);
 
+            if (TravelContextHelper.IsNewTrip(travelContext, packingIntentResult))
+            {
+                travelContext = new TravelContext();
+                travelContextStore.Save(conversationId, travelContext);
+            }
+
             // Update and save the travel context
             TravelContextHelper.Update(travelContext, packingIntentResult);
             travelContextStore.Save(conversationId, travelContext);
