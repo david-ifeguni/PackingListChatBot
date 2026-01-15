@@ -47,47 +47,12 @@ namespace PackingListChatBot.SemanticKernel.Tools
                 };
                 var json = ExtractJson(result.ToString());
                 var packingIntentResult  = JsonSerializer.Deserialize<PackingIntentResult>(json, options);
-                if (packingIntentResult == null)
-                {
-                    return PoliteClarificationRequest();
-                }
-
-                packingIntentResult.ConfidenceScore = CalculateConfidenceScore(packingIntentResult);
-                if (packingIntentResult.ConfidenceScore < 0.6)
-                { 
-                    packingIntentResult.NeedsClarification = true;
-                }
                 return packingIntentResult;
             }
             catch
             {
-                return PoliteClarificationRequest();
+                return new PackingIntentResult();
             }
-        }
-
-        private static double CalculateConfidenceScore(PackingIntentResult packingIntentResult)
-        {
-            double score = 1.0;
-            
-            if (string.IsNullOrEmpty(packingIntentResult.Location)) score -= 0.3;
-
-            if (!packingIntentResult.StartTime.HasValue || !packingIntentResult.EndTime.HasValue) score -= 0.3;
-
-            if (packingIntentResult.UnknownActivities != null && packingIntentResult.UnknownActivities.Count > 0) score -= 0.2;
-
-            if (packingIntentResult.NeedsClarification) score -= 0.4;
-
-            return Math.Max(0, score);
-        }
-
-        private static PackingIntentResult PoliteClarificationRequest()
-        {
-            //TODO: This may not be needed if we set the clarification question after checking TravelContext
-            return new PackingIntentResult
-            {
-                NeedsClarification = true,
-                ClarificationQuestion = "I'm sorry, I don't fully understand your travel details. Can you please clarify your location, travel dates and any planned activities?"
-            };
         }
 
         private static string ExtractJson(string rawResult)

@@ -22,7 +22,21 @@ namespace PackingListChatBot.Services.OpenMeteoService
         /// </summary>
         public async Task<WeatherProfile> GetWeatherProfile(string location, DateOnly startDate, DateOnly endDate)
         {
-            var geocodingResponse = await httpClient.GetFromJsonAsync<GeocodingResponse>($"{geocodingUrl}?name={location}&count=1");
+            HttpResponseMessage? geocoding;
+            HttpResponseMessage? historicalWeather;
+            try
+            {
+                geocoding = await httpClient.GetAsync($"{geocodingUrl}?name={location}&count=1");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Call to Geocoding Service failed: {ex.Message}");
+            }
+            if (!geocoding.IsSuccessStatusCode)
+            {
+                throw new Exception($"Error: Geocoding Service returned {geocoding.StatusCode}");
+            }
+            var geocodingResponse = await geocoding.Content.ReadFromJsonAsync<GeocodingResponse>();
 
             var geocodingResult = geocodingResponse?.Results?.FirstOrDefault() ?? throw new Exception("No location found");
 
@@ -33,14 +47,26 @@ namespace PackingListChatBot.Services.OpenMeteoService
             var historicalStart = $"{startDate.AddYears(-1):yyyy-MM-dd}";
             var historicalEnd = $"{endDate.AddYears(-1):yyyy-MM-dd}";
 
-            var historicalWeatherResponse = await httpClient.GetFromJsonAsync<HistoricalWeatherResponse>(historicalWeatherUrl +
-                                                                                                $"?latitude={lat}&longitude={lng}" +
-                                                                                                $"&start_date={historicalStart}" +
-                                                                                                $"&end_date={historicalEnd}" +
-                                                                                                $"&daily=apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours,weather_code" +
-                                                                                                $"&hourly=relative_humidity_2m" +
-                                                                                                $"&temperature_unit=fahrenheit" +
-                                                                                                $"&timezone=GMT");
+            try
+            {
+                historicalWeather = await httpClient.GetAsync(historicalWeatherUrl +$"?latitude={lat}&longitude={lng}" + 
+                                                                                    $"&start_date={historicalStart}" +
+                                                                                    $"&end_date={historicalEnd}" +
+                                                                                    $"&daily=apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours,weather_code" +
+                                                                                    $"&hourly=relative_humidity_2m" +
+                                                                                    $"&temperature_unit=fahrenheit" +
+                                                                                    $"&timezone=GMT");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Call to Historical Weather Service failed: {ex.Message}");
+            }
+            if (!historicalWeather.IsSuccessStatusCode)
+            {
+                throw new Exception($"Historical Weather Service returned {historicalWeather.StatusCode}");
+            }
+
+            var historicalWeatherResponse = await historicalWeather.Content.ReadFromJsonAsync<HistoricalWeatherResponse>();
 
             if (historicalWeatherResponse == null)
             {

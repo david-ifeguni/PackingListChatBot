@@ -1,11 +1,12 @@
 ﻿using System.Text.Json;
-using PackingListChatBot.Models;
 using PackingListChatBot.Helpers;
+using PackingListChatBot.Models;
 using PackingListChatBot.SemanticKernel.KernelFactory;
+using PackingListChatBot.SemanticKernel.Models;
 using PackingListChatBot.SemanticKernel.Prompts;
 using PackingListChatBot.SemanticKernel.Tools;
-using PackingListChatBot.Store;
 using PackingListChatBot.Services.OpenMeteoService;
+using PackingListChatBot.Store;
 
 namespace PackingListChatBot.Services.Packing
 {
@@ -38,11 +39,30 @@ namespace PackingListChatBot.Services.Packing
 
         public async Task<PackingListServiceResponse> GeneratePackingListAsync(PackingChatRequest packingChatRequest, string conversationId)
         {
+            WeatherProfile weatherProfile;
+            PackingIntentResult packingIntentResult;
+
             // Call the LLM (via the Orchestrator) to get the PackingIntentResult
-            var packingIntentResult = await packingTool.GetPackingIntentAsync(packingChatRequest.Message);
+            try
+            {
+                packingIntentResult = await packingTool.GetPackingIntentAsync(packingChatRequest.Message);
+            }
+            catch (Exception ex)
+            {
+                return new PackingListServiceResponse
+                {
+                    Error = $"Sorry, I cannot understand your request. Can you try again?"
+                };
+            }
 
             // Get current travel context
             var travelContext = travelContextStore.Get(conversationId);
+
+            if (TravelContextHelper.IsNewTrip(travelContext, packingIntentResult))
+            {
+                travelContext = new TravelContext();
+                travelContextStore.Save(conversationId, travelContext);
+            }
 
             // Update and save the travel context
             TravelContextHelper.Update(travelContext, packingIntentResult);
@@ -59,7 +79,17 @@ namespace PackingListChatBot.Services.Packing
             }
 
             // Use packingIntentResult to get the Weather Profile from the Weather Service (powered by Open-Meteo APIs)
-            var weatherProfile = await weatherService.GetWeatherProfile(travelContext.Location, travelContext.StartTime.Value, travelContext.EndTime.Value);
+            try
+            {
+                weatherProfile = await weatherService.GetWeatherProfile(travelContext.Location, travelContext.StartTime.Value, travelContext.EndTime.Value);
+            }
+            catch (Exception ex)
+            {
+                return new PackingListServiceResponse
+                {
+                    Error = $"Sorry, I was unable to retrieve weather data for {travelContext.Location}. {ex.Message}"
+                };
+            }
 
             // Use weatherProfile and activities from packingIntentResult to get the packingConstraints
             var activityList = travelContext.Activities.ToList();
